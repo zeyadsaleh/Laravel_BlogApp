@@ -1,4 +1,4 @@
-@extends('Layout.app')
+@extends('layouts.app')
 @section('content')
 <form method="POST" action="{{route('posts.update',['post' => $post->id])}}">
     {{ csrf_field() }}
@@ -13,10 +13,12 @@
     </div>
 
     <div class="form-group">
-        <label>Users</label>
-        <select name='user_id' class="form-control">
-            <option value="{{$post->user->id}}">{{$post->user->name}}</option>
-        </select>
+    <label>Users</label>
+    <select name = 'user_id' class="form-control">
+        @foreach($users as $user)
+        <option value="{{$user -> id}}">{{$user->name}}</option>
+        @endforeach
+    </select>
     </div>
 
 

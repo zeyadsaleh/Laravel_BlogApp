@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Cviebrock\EloquentSluggable\Services\SlugService;
+
+use App\Http\Requests\PostRequest;
 use Illuminate\Http\Request;
 use App\Post;
 use App\User;
@@ -10,21 +13,24 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::paginate(2);;
         // @dd($posts);
         return view('Posts.index', [
             'posts' => $posts,
         ]);
     }
 
-    public function show()
+    public function show(Post $post)
     {
+        //@dd($post);
         //get the id from url
-        $request = request();
+        //$request = request();
         //@dd($request);
-        $postId = $request->post;
+        //$postId = $request->post;
         //qurey the database to get the post
-        $post = Post::find($postId);
+        //$post = Post::find($postId);
+        //add code to handle if the post id is not existed
+
         //put the value to the view
 
         return view('Posts.show', ['post' => $post]);
@@ -36,16 +42,23 @@ class PostController extends Controller
         return view('Posts.create', ['users' => $users]);
     }
 
-    public function store()
+    public function store(PostRequest $request)
     {
         //get the request data
-        $request = request();
         //@dd($request) -> title;
+
+        //validation
+
+        /*$validatedData = $request->validate([
+            'title' => 'required|unique:posts|min:3',
+            'description' => 'required|min:10',
+        ]);*/
         //store the data in the database
         Post::create([
             'title' => $request->title,
             'description' => $request->description,
-            'user_id' => $request->user_id
+            'user_id' => $request->user_id,
+
         ]);
 
         //redirect to posts
@@ -67,32 +80,43 @@ class PostController extends Controller
     }
 
 
-    public function update()
+    public function update(Request $request)
     {
-        $request = request();
-        
-        $postId = $request -> post;
+        //validation
+        $validatedData = $request->validate([
+            'title' => 'required|min:3',
+            'description' => 'required|min:10',
+        ]);
+        $postId = $request->post;
         //@dd($postId);
         $post = POST::find($postId);
         //@dd($request->title);
-        $post->title = $request->title;
-        $post->description = $request->title;
+        /*$post->title = $request->title;
+        $post->description = $request->description;
+        $post->save();*/
+        $post->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'user_id' => $request->user_id,
+        ]);
 
-        $post->save();
 
         return redirect()->route('posts.index');
-
-
     }
 
     public function edit()
     {
-        //get the post id and user
+        //get the post id and users
         $request = request();
+        $users = User::all();
         $postId = $request->post;
         //query the database to get this post
         $post = Post::find($postId);
         //render to form to edit this post
-        return view('Posts.edit', ['post' => $post]);
+        return view(
+            'Posts.edit',
+            ['post' => $post],
+            ['users' => $users]
+        );
     }
 }
