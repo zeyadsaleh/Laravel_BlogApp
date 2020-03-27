@@ -9,7 +9,7 @@
           </ul>
       </div>
   @endif
-<form method="POST" action="{{route('posts.store')}}">
+<form method="POST" action="{{route('posts.store')}}" enctype="multipart/form-data" class="m-3">
     @csrf
     <div class="form-group">
         <label for="exampleInputEmail1">Title </label>
@@ -19,6 +19,7 @@
         <label for="exampleInputPassword1">Description</label>
         <textarea name="description" class="form-control"></textarea>
     </div>
+    <input required type="file" class="form-control mt-2 mb-2" name="image">
 
     <div class="form-group">
     <label>Users</label>

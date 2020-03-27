@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('content')
-<form method="POST" action="{{route('posts.update',['post' => $post->id])}}">
+@if ($errors->any())
+      <div class="alert alert-danger">
+          <ul>
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+  @endif
+<form method="POST" action="{{route('posts.update',['post' => $post->id])}}" enctype="multipart/form-data" class="m-3">
     {{ csrf_field() }}
     {{ method_field('PUT') }}
     <div class="form-group">

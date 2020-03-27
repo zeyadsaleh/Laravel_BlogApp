@@ -24,10 +24,13 @@ class PostRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
-            'title' => 'required|unique:posts|min:3',
+            'title' => $this->post ? 'required|min:3|' : 'unique:posts',
             'description' => 'required|min:10',
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
+            'image' => 'sometimes|image|mimes:png,jpg|max:2048',
+
         ];
     }
 

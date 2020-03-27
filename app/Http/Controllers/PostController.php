@@ -6,6 +6,8 @@ use Cviebrock\EloquentSluggable\Services\SlugService;
 
 use App\Http\Requests\PostRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
 use App\Post;
 use App\User;
 
@@ -45,51 +47,43 @@ class PostController extends Controller
     public function store(PostRequest $request)
     {
         //get the request data
-        //@dd($request) -> title;
-
-        //validation
-
-        /*$validatedData = $request->validate([
-            'title' => 'required|unique:posts|min:3',
-            'description' => 'required|min:10',
-        ]);*/
+        //$path = $request->file('image')->store('image');
+       // $path = Storage::putFile('image', $request->file('image'));    
         //store the data in the database
         Post::create([
             'title' => $request->title,
             'description' => $request->description,
             'user_id' => $request->user_id,
-
+            'file' => Storage::putFile('image', $request->file('image'))
+            
         ]);
 
         //redirect to posts
         return redirect()->route('posts.store');
     }
 
-    public function destroy()
+    public function destroy(Post $post)
     {
         //get the post id
-        $request = request();
-        $postId = $request->post;
+        //$request = request();
+       // $postId = $request->post;
         //@dd($userId);
         //delete it from database
-        $post = POST::findOrFail($postId);
+       // $post = POST::findOrFail($postId);
 
         $post->delete();
+        if ($post->image) Storage::delete('public/'.$post->image);
         //redirect to the show page
         return redirect()->route('posts.index');
     }
 
 
-    public function update(Request $request)
+    public function update(PostRequest $request, Post $post)
     {
-        //validation
-        $validatedData = $request->validate([
-            'title' => 'required|min:3',
-            'description' => 'required|min:10',
-        ]);
-        $postId = $request->post;
+        
+        //$postId = $request->post;
         //@dd($postId);
-        $post = POST::find($postId);
+       // $post = POST::find($postId);
         //@dd($request->title);
         /*$post->title = $request->title;
         $post->description = $request->description;
@@ -99,19 +93,23 @@ class PostController extends Controller
             'description' => $request->description,
             'user_id' => $request->user_id,
         ]);
+        if ($request->hasFile('image')){
+            $attributes['image'] = Post::storePostImage($request);
+            Storage::delete('public/'.$post->image);
+        }
 
 
         return redirect()->route('posts.index');
     }
 
-    public function edit()
+    public function edit(Post $post)
     {
         //get the post id and users
-        $request = request();
+       // $request = request();
         $users = User::all();
-        $postId = $request->post;
+       // $postId = $request->post;
         //query the database to get this post
-        $post = Post::find($postId);
+       // $post = Post::find($postId);
         //render to form to edit this post
         return view(
             'Posts.edit',
