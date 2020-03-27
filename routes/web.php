@@ -32,4 +32,3 @@ Route::put('/posts/{post}', 'PostController@update')->name('posts.update');
 
 Route::get('/posts/{post}/edit', 'PostController@edit')->name('posts.edit');
 
-
