@@ -66,6 +66,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
+                                <a href="/login/github" type="submit" class="btn bg-dark text-white">
+                                    {{ __('SignUp With Github') }}
+                                </a>
                             </div>
                         </div>
                     </form>

@@ -5,7 +5,7 @@
     <h3 class="card-title">{{$post -> title}}</h3>
     <p class="card-text">{{$post -> description}}</p>
     @if($post->file)
-    <img src="{{asset('storage/'.$post->file)}}" class="card-img-top" alt="image">
+    <img src="{{asset('storage/image'.$post->file)}}" class="card-img-top" alt="image">
     @endif
   </div>
 </div>
