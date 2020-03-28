@@ -61,13 +61,19 @@
                             </div>
                         </div>
 
-                        <div class="form-group row mb-0">
+                        <div class="form-group row mb-0" >
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
-                                <a href="/login/github" type="submit" class="btn bg-dark text-white">
+                                <br>
+                                <br>
+                                <a href="/login/github" type="submit" class="btn bg-dark text-white" style=" display: block;">
                                     {{ __('SignUp With Github') }}
+                                </a>
+                                
+                                <a href="/login/google" type="submit" class="btn bg-danger text-white mt-2" style=" display: block;">
+                                    {{ __('SignUp With google') }}
                                 </a>
                             </div>
                         </div>
