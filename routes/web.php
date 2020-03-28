@@ -35,8 +35,10 @@ Route::get('/posts/{post}/edit', 'PostController@edit')->name('posts.edit');
 
 });
 
-Route::get('login/github', 'Auth\LoginController@redirectToProvider');
-Route::get('login/github/callback', 'Auth\LoginController@handleProviderCallback');
+Route::get('login/{provider}', 'Auth\LoginController@redirectToProvider');
+Route::get('login/{provider}/callback', 'Auth\LoginController@handleProviderCallback');
+
+
 
 Auth::routes();
 

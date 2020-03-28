@@ -40,9 +40,9 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function redirectToProvider()
+    public function redirectToProvider($provider)
     {
-        return Socialite::driver('github')->redirect();
+        return Socialite::driver($provider)->redirect();
     }
 
     /**
@@ -50,27 +50,44 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function handleProviderCallback()
+    public function handleProviderCallback($provider)
     {
-        $userInfo = Socialite::driver('github')->user();
-        $user = User::where('provider_id', $userInfo->id)->first();
-        //@dd($user);
-
-        if (!$user) {
-            $user = User::create([
-                'name'     => $userInfo->nickname,
-                'email'    => $userInfo->email,
-                'provider' => 'github',
-                'provider_id' => $userInfo->id,
-                'password' => "",
-
-            ]);
-        }
+        $getInfo = Socialite::driver($provider)->user();
+        $user = $this->createUser($getInfo, $provider);
 
         auth()->login($user);
 
         return redirect()->to('/home');
-
-        // $user->token;
     }
+    function createUser($getInfo, $provider)
+    {
+
+        $user = User::where('provider_id', $getInfo->id)->first();
+
+        if (!$user) {
+            if($provider === 'github'){
+                $user = User::create([
+                    'name'     => $getInfo->nickname,
+                    'email'    => $getInfo->email,
+                    'provider' => $provider,
+                    'provider_id' => $getInfo->id,
+                    'password' => ""
+                ]);
+            }
+            else{
+                $user = User::create([
+                    'name'     => $getInfo->name,
+                    'email'    => $getInfo->email,
+                    'provider' => $provider,
+                    'provider_id' => $getInfo->id,
+                    'password' => ""
+                ]);
+            }
+            
+        }
+        return $user;
+    }
+
+    // $user->token;
+
 }
