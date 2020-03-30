@@ -3,9 +3,9 @@
 <div class="card m-3">
   <div class="card-body">
     <h3 class="card-title">{{$post -> title}}</h3>
-    <p class="card-text">{{$post -> description}}</p>
+    <p class="card-text">{{$post -> description}}</p>    
     @if($post->file)
-    <img src="{{asset('storage/image'.$post->file)}}" class="card-img-top" alt="image">
+    <img class="card-img-top img-fluid" src="{{url('uploads/'.$post->file)}}" alt="image" style="height: 200px; width:200px">
     @endif
   </div>
 </div>

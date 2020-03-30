@@ -20,6 +20,10 @@
         <label for="exampleInputPassword1">Description</label>
         <textarea name="description" class="form-control">{{$post-> description}}</textarea>
     </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Title </label>
+        <input  type="file" value="{{$post-> file}}" class="form-control mt-2 mb-2" name="image">
+    </div>
 
     <div class="form-group">
     <label>Users</label>

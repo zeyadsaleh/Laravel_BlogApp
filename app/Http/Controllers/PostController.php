@@ -7,6 +7,8 @@ use Cviebrock\EloquentSluggable\Services\SlugService;
 use App\Http\Requests\PostRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+
 
 use App\Post;
 use App\User;
@@ -16,7 +18,6 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::paginate(2);;
-        // @dd($posts);
         return view('Posts.index', [
             'posts' => $posts,
         ]);
@@ -24,18 +25,12 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        //@dd($post);
-        //get the id from url
-        //$request = request();
-        //@dd($request);
-        //$postId = $request->post;
-        //qurey the database to get the post
-        //$post = Post::find($postId);
-        //add code to handle if the post id is not existed
+        $url = Storage::url($post->file);
 
-        //put the value to the view
-
-        return view('Posts.show', ['post' => $post]);
+        return view('Posts.show', [
+            'post' => $post,
+            'url' => $url
+        ]);
     }
 
     public function create()
@@ -46,16 +41,17 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
-        //get the request data
-        //$path = $request->file('image')->store('image');
-       // $path = Storage::putFile('image', $request->file('image'));    
-        //store the data in the database
+        $cover = $request->file('image');
+        $extension = $cover->getClientOriginalExtension();
+        Storage::disk('public')->put($cover->getFilename() . '.' . $extension,  File::get($cover));
+
         Post::create([
             'title' => $request->title,
             'description' => $request->description,
             'user_id' => $request->user_id,
-            'file' => Storage::putFile('image', $request->file('image'))
-            
+            'file' => $cover->getFilename() . '.' . $extension,
+
+
         ]);
 
         //redirect to posts
@@ -63,16 +59,9 @@ class PostController extends Controller
     }
 
     public function destroy(Post $post)
-    {
-        //get the post id
-        //$request = request();
-       // $postId = $request->post;
-        //@dd($userId);
-        //delete it from database
-       // $post = POST::findOrFail($postId);
-
+    {   
         $post->delete();
-        if ($post->image) Storage::delete('public/'.$post->image);
+        if ($post->file) Storage::delete('public/uploads'.$post->file);
         //redirect to the show page
         return redirect()->route('posts.index');
     }
@@ -80,36 +69,27 @@ class PostController extends Controller
 
     public function update(PostRequest $request, Post $post)
     {
-        
-        //$postId = $request->post;
-        //@dd($postId);
-       // $post = POST::find($postId);
-        //@dd($request->title);
-        /*$post->title = $request->title;
-        $post->description = $request->description;
-        $post->save();*/
+        if ($request->file) {
+            Storage::delete('public/uploads'.$post->file);
+            $cover = $request->file('image');
+            $extension = $cover->getClientOriginalExtension();
+            Storage::disk('public')->put($cover->getFilename() . '.' . $extension,  File::get($cover));
+            $post->update(['file' => $cover->getFilename() . '.' . $extension,]);
+        }
+
+
         $post->update([
             'title' => $request->title,
             'description' => $request->description,
             'user_id' => $request->user_id,
         ]);
-        if ($request->hasFile('image')){
-            $attributes['image'] = Post::storePostImage($request);
-            Storage::delete('public/'.$post->image);
-        }
-
-
         return redirect()->route('posts.index');
     }
 
     public function edit(Post $post)
     {
         //get the post id and users
-       // $request = request();
         $users = User::all();
-       // $postId = $request->post;
-        //query the database to get this post
-       // $post = Post::find($postId);
         //render to form to edit this post
         return view(
             'Posts.edit',
