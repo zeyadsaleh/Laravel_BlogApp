@@ -59,10 +59,10 @@ class LoginController extends Controller
 
         return redirect()->to('/home');
     }
-    function createUser($getInfo, $provider)
+    private function createUser($getInfo, $provider)
     {
 
-        $user = User::where('provider_id', $getInfo->id)->first();
+        $user = User::where('email', $getInfo->email)->first();
 
         if (!$user) {
             if($provider === 'github'){
